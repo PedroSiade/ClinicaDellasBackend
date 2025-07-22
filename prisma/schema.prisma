@@ -8,157 +8,151 @@ datasource db {
 }
 
 model Professional {
-  id          String   @id @default(cuid())
-  name        String   @db.VarChar(100)
-  slug        String   @unique @db.VarChar(120)
-  email       String?  @unique @db.VarChar(100)
-  phone       String?  @db.VarChar(20)
-  photoUrl    String?  @db.VarChar(500)
-  description String?  @db.VarChar(300)
-  biography   String?  @db.Text
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(50)
+  email       String?   @unique @db.VarChar(100)
+  phone       String?   @db.VarChar(20)
+  photoUrl    String?   @db.VarChar(500)
+  description String?   @db.VarChar(300)
+  biography   String?   @db.Text
   role        Role
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt
 
-  specialties ProfessionalSpecialty[]
-  services    ServiceProfessional[]
-  posts       Post[]
+  //specialties ProfessionalSpecialty[]
+  //services    ServiceProfessional[]
+  posts Post[]
 
   @@map("professional")
 }
 
 model Specialty {
-  id          String   @id @default(cuid())
-  name        String   @unique @db.VarChar(80)
-  slug        String   @unique @db.VarChar(100)
-  description String?  @db.VarChar(200)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          Int       @id @default(autoincrement())
+  name        String    @unique @db.VarChar(80)
+  slug        String    @unique @db.VarChar(100)
+  description String?   @db.VarChar(200)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt
 
-  professionals ProfessionalSpecialty[]
+  //professionals ProfessionalSpecialty[]
 
   @@map("specialty")
 }
 
-model ProfessionalSpecialty {
-  id                String   @id @default(cuid())
-  professionalId    String
-  specialtyId       String
-  isPrimary         Boolean  @default(false)
-  yearsOfExperience Int?
-  certifications    Json?
-  isActive          Boolean  @default(true)
-  displayOrder      Int      @default(0)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  professional Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
-  specialty    Specialty    @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
-
-  @@unique([professionalId, specialtyId])
-  @@index([professionalId, isActive, displayOrder])
-  @@map("professional_specialty")
-}
+/**
+ * model ProfessionalSpecialty {
+ * id             Int      @id @default(autoincrement())
+ * professionalId Int
+ * specialtyId    Int
+ * isPrimary      Boolean  @default(false)
+ * certifications Json?
+ * isActive       Boolean  @default(true)
+ * displayOrder   Int      @default(0)
+ * createdAt      DateTime @default(now())
+ * updatedAt      DateTime @updatedAt
+ * professional Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
+ * specialty    Specialty    @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
+ * @@unique([professionalId, specialtyId])
+ * @@index([professionalId, isActive, displayOrder])
+ * @@map("professional_specialty")
+ * }
+ */
 
 model Service {
-  id          String   @id @default(cuid())
-  name        String   @db.VarChar(100)
-  slug        String   @unique @db.VarChar(120)
-  iconUrl     String?  @db.VarChar(500)
-  imageUrl    String?  @db.VarChar(500)
-  summary     String   @db.VarChar(200)
-  description String?  @db.Text
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(100)
+  slug        String    @unique @db.VarChar(120)
+  iconUrl     String?   @db.VarChar(500)
+  imageUrl    String?   @db.VarChar(500)
+  summary     String    @db.VarChar(200)
+  description String?   @db.Text
   duration    Int?
-  price       Decimal? @db.Decimal(10, 2)
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt
 
-  professionals ServiceProfessional[]
-  categories    Category[]
+  //professionals ServiceProfessional[]
+  categories Category[]
 
   @@map("service")
 }
 
 model Category {
-  id          String   @id @default(cuid())
-  name        String   @unique @db.VarChar(60)
-  slug        String   @unique @db.VarChar(80)
-  description String?  @db.VarChar(200)
-  iconUrl     String?  @db.VarChar(500)
-  color       String?  @db.VarChar(7)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          Int       @id @default(autoincrement())
+  name        String    @unique @db.VarChar(60)
+  slug        String    @unique @db.VarChar(80)
+  description String?   @db.VarChar(200)
+  iconUrl     String?   @db.VarChar(500)
+  color       String?   @db.VarChar(7)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt
 
   services Service[]
 
   @@map("category")
 }
 
-model ServiceProfessional {
-  id             String   @id @default(cuid())
-  serviceId      String
-  professionalId String
-  customPrice    Decimal? @db.Decimal(10, 2)
-  customDuration Int?
-  isAvailable    Boolean  @default(true)
-  notes          String?  @db.VarChar(300)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  service      Service      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  professional Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
-
-  @@unique([serviceId, professionalId])
-  @@index([professionalId, isAvailable])
-  @@map("service_professional")
-}
+// model ServiceProfessional {
+//   id             Int      @id @default(autoincrement())
+//   serviceId      String
+//   professionalId String
+//   customPrice    Decimal? @db.Decimal(10, 2)
+//   customDuration Int?
+//   isAvailable    Boolean  @default(true)
+//   notes          String?  @db.VarChar(300)
+//   createdAt      DateTime @default(now())
+//   updatedAt      DateTime @updatedAt
+//
+//   service      Service      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+//   professional Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
+//
+//   @@unique([serviceId, professionalId])
+//   @@index([professionalId, isAvailable])
+//   @@map("service_professional")
+// }
 
 model Post {
-  id              String     @id @default(cuid())
-  title           String     @db.VarChar(150)
-  slug            String     @unique @db.VarChar(180)
-  excerpt         String     @db.VarChar(250)
-  content         String     @db.Text
-  featuredImage   String?    @db.VarChar(500)
-  metaTitle       String?    @db.VarChar(60)
-  metaDescription String?    @db.VarChar(160)
-  status          PostStatus @default(DRAFT)
-  isPublished     Boolean    @default(false)
-  publishedAt     DateTime?
-  professionalId  String
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
+  id             Int        @id @default(autoincrement())
+  title          String     @db.VarChar(150)
+  slug           String     @unique @db.VarChar(180)
+  description    String     @db.VarChar(250)
+  content        String     @db.Text
+  featuredImage  String?    @db.VarChar(500)
+  status         PostStatus @default(DRAFT)
+  isPublished    Boolean    @default(false)
+  publishedAt    DateTime?
+  professionalId Int
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime?  @updatedAt
 
   professional Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
-  tags         Tag[]
+  //tags         Tag[]
 
   @@map("post")
 }
 
-model Tag {
-  id          String   @id @default(cuid())
-  name        String   @unique @db.VarChar(50)
-  slug        String   @unique @db.VarChar(60)
-  description String?  @db.VarChar(150)
-  color       String?  @db.VarChar(7)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  posts Post[]
-
-  @@map("tag")
-}
+//
+// model Tag {
+//   id          Int      @id @default(autoincrement())
+//   name        String   @unique @db.VarChar(50)
+//   slug        String   @unique @db.VarChar(60)
+//   description String?  @db.VarChar(150)
+//   color       String?  @db.VarChar(7)
+//   createdAt   DateTime @default(now())
+//   updatedAt   DateTime @updatedAt
+//
+//   posts Post[]
+//
+//   @@map("tag")
+// }
 
 enum Role {
   DOCTOR
   NUTRITIONIST
   PSYCHOLOGIST
   PHYSIOTHERAPIST
-  DENTIST
-  NURSE
-  OTHER
+  OWNER
 
   @@map("role")
 }
@@ -170,26 +164,3 @@ enum PostStatus {
 
   @@map("post_status")
 }
-
-/**
- * 🔍 ANÁLISE DAS MUDANÇAS:
- * ✅ CONVERTIDAS PARA AUTOMÁTICAS:
- * 1. ServiceCategory → Service ↔ Category
- * - Razão: Categorias são apenas organizacionais
- * - Sem necessidade de metadados extras
- * 2. PostTag → Post ↔ Tag
- * - Razão: Tags são apenas labels
- * - Sem necessidade de prioridade ou status
- * 🔄 MANTIDAS COMO MANUAIS:
- * 1. ProfessionalSpecialty
- * - Razão: Precisa de isPrimary, yearsOfExperience, certifications
- * - Essencial para o negócio da clínica
- * 2. ServiceProfessional
- * - Razão: Cada profissional pode ter preço/duração específica
- * - Controle de disponibilidade individual
- * 💡 RESULTADO:
- * - Código mais limpo para relações simples
- * - Controle total onde é necessário
- * - Melhor performance nas consultas básicas
- * - Mantém flexibilidade para regras de negócio
- */

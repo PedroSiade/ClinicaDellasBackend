@@ -1,12 +1,22 @@
-import express, { Express, Request, Response } from "express";
+import express from 'express';
+import { PrismaClient } from '@prisma/client';
+import {createMainRouter} from "./routes";
 
-const app: Express = express();
+export const prisma = new PrismaClient();
+
+const app = express();
 const port = 4000;
 
-app.get("/", (req: Request, res: Response) => {
-    res.send("Express + TypeScript Server");
-});
+app.use(express.json());
+
+
+app.use('/', createMainRouter());
 
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+    console.log(`Server running at http://localhost:${port}`);
+});
+
+process.on('SIGINT', async () => {
+    await prisma.$disconnect();
+    process.exit(0);
 });
