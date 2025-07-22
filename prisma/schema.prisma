@@ -16,7 +16,6 @@ model Professional {
   description String?   @db.VarChar(300)
   biography   String?   @db.Text
   role        Role
-  isActive    Boolean   @default(true)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime? @updatedAt
 
