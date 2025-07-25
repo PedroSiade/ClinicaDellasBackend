@@ -1,12 +1,12 @@
 import {Request, Response} from "express";
-import {getManyUseCase} from "../../useCases/workers/getMany";
-import {getOneUseCase} from "../../useCases/workers/getOne";
-import {deleteUseCase} from "../../useCases/workers/delete";
+import {getManyUseCase} from "../../useCases/worker/getMany";
+import {getOneUseCase} from "../../useCases/worker/getOne";
+import {deleteUseCase} from "../../useCases/worker/delete";
 import {createProfessionalInputSchema} from "../../schemas/worker/createWorker";
 import {ZodError} from "zod";
-import {createWorkerUseCase} from "../../useCases/workers/create";
+import {createWorkerUseCase} from "../../useCases/worker/create";
 import {updateProfessionalInputSchema} from "../../schemas/worker/updateWorker";
-import {updateWorkerUseCase} from "../../useCases/workers/update";
+import {updateWorkerUseCase} from "../../useCases/worker/update";
 import {Prisma} from '@prisma/client'
 
 export const getManyWorker = async (req: Request, res: Response) => {

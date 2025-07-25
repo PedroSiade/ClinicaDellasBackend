@@ -1,0 +1,31 @@
+import { prisma } from "../../index";
+import { Professional } from "@prisma/client";
+
+export const getManyPostUseCase = async ({
+  search,
+  page,
+}: {
+  search: string;
+  page: number;
+}) => {
+  return await prisma.post.findMany({
+    where: {
+      OR: [
+        { title: { startsWith: search } },
+        { description: { startsWith: search } },
+      ],
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: 9,
+    skip: (page - 1) * 9,
+    select: {
+      id: true,
+      title: true,
+      featuredImage: true,
+      description: true,
+      createdAt: true,
+    },
+  });
+};
