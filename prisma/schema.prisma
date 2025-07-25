@@ -61,23 +61,21 @@ model Specialty {
 model Service {
   id          Int       @id @default(autoincrement())
   name        String    @db.VarChar(100)
-  slug        String    @unique @db.VarChar(120)
   iconUrl     String?   @db.VarChar(500)
   imageUrl    String?   @db.VarChar(500)
   summary     String    @db.VarChar(200)
   description String?   @db.Text
-  duration    Int?
   isActive    Boolean   @default(true)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime? @updatedAt
 
   //professionals ServiceProfessional[]
-  categories Category[]
+  //categories Category[]
 
   @@map("service")
 }
 
-model Category {
+/*model Category {
   id          Int       @id @default(autoincrement())
   name        String    @unique @db.VarChar(60)
   slug        String    @unique @db.VarChar(80)
@@ -90,7 +88,7 @@ model Category {
   services Service[]
 
   @@map("category")
-}
+}*/
 
 // model ServiceProfessional {
 //   id             Int      @id @default(autoincrement())

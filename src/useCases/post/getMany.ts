@@ -1,5 +1,4 @@
 import { prisma } from "../../index";
-import { Professional } from "@prisma/client";
 
 export const getManyPostUseCase = async ({
   search,

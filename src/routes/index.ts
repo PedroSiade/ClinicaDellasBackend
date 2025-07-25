@@ -13,6 +13,10 @@ import {
   getOnePost,
   updatePost,
 } from "../controller/post";
+import {
+  getManyService,
+  createService,  
+} from "../controller/service";
 
 const createMainRouter = (): Router => {
   const router = Router();
@@ -28,6 +32,11 @@ const createMainRouter = (): Router => {
   router.delete("/post/:id", deleteOnePost);
   router.post("/post", createPost);
   router.put("/post/:id", updatePost);
+
+  router.get("/service", getManyService);
+  router.post("/service", createService);
+
+
 
   return router;
 };
