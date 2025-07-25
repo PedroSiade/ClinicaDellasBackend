@@ -11,8 +11,8 @@ export const getManyPostUseCase = async ({
   return await prisma.post.findMany({
     where: {
       OR: [
-        { title: { startsWith: search } },
-        { description: { startsWith: search } },
+        { title: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
       ],
     },
     orderBy: {
