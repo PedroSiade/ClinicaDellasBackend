@@ -4,7 +4,7 @@ import { CreateServiceInput } from "../../schemas/service/createService";
 type CreateServiceResponse = {
   hasError: boolean;
   message: string | null;
-  data: any; // Pode ser tipado como `Post` se necessário
+  data: any;
 };
 
 export const createServiceUseCase = async ({
