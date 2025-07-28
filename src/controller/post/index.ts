@@ -105,10 +105,12 @@ export const createPost = async (req: Request, res: Response) => {
     const parsedBody = createPostSchema.parse(req.body);
 
     const data = await createPostUseCase({ data: parsedBody });
-    if (!data.data) return res.status(404).json(data);
+    if (!data.data)
+      return res.status(404).json({
+        ...data,
+      });
     return res.status(201).json({
-      hasError: false,
-      data,
+      ...data,
     });
   } catch (error) {
     if (error instanceof ZodError) {
