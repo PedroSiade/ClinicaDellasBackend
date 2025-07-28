@@ -26,7 +26,7 @@ export const createServiceSchema = z.object({
     .trim(),
   
   description: z.string()
-    .max(65535, 'Descrição muito longa') // Limite típico para TEXT
+    .max(65535, 'Descrição muito longa')
     .optional()
     .or(z.literal('')),
   
