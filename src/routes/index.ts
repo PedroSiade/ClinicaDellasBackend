@@ -15,14 +15,17 @@ import {
 } from "../controller/post";
 import {
   createService,
-  deleteOneService,  
+  deleteOneService,
   getManyService,
   getOneService,
-  updateService, 
+  updateService,
 } from "../controller/service";
+import { getHomeData } from "../controller/home";
 
 const createMainRouter = (): Router => {
   const router = Router();
+
+  router.get("/", getHomeData);
 
   router.get("/professional", getManyWorker);
   router.get("/professional/:id", getOneWorker);
