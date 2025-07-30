@@ -11,6 +11,8 @@ type Article = {
   professionalId: number;
 };
 
+const professionalId = 16;
+
 const articlesData: Article[] = [
   {
     title: "A importância das consultas ginecológicas regulares",
@@ -21,7 +23,7 @@ const articlesData: Article[] = [
     featuredImage:
       "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600&h=300&fit=crop",
     status: "PUBLISHED",
-    professionalId: 1,
+    professionalId,
   },
   {
     title: "Reposição hormonal: quando e por que considerar?",
@@ -32,7 +34,7 @@ const articlesData: Article[] = [
     featuredImage:
       "https://images.unsplash.com/photo-1628681014799-c74a250a824c?w=600",
     status: "PUBLISHED",
-    professionalId: 1,
+    professionalId,
   },
   {
     title: "A importância da saúde intestinal para o bem-estar da mulher",
@@ -43,7 +45,7 @@ const articlesData: Article[] = [
     featuredImage:
       "https://images.unsplash.com/photo-1606787366850-de6330128bfc?w=600",
     status: "PUBLISHED",
-    professionalId: 4,
+    professionalId,
   },
   {
     title: "Como se preparar para sua primeira consulta ginecológica",
@@ -54,7 +56,7 @@ const articlesData: Article[] = [
     featuredImage:
       "https://images.unsplash.com/photo-1588776814546-bbe3b1cbbbcf?w=600",
     status: "PUBLISHED",
-    professionalId: 3,
+    professionalId,
   },
   {
     title: "5 alimentos que ajudam a equilibrar os hormônios naturalmente",
@@ -65,7 +67,7 @@ const articlesData: Article[] = [
     featuredImage:
       "https://images.unsplash.com/photo-1612197524494-94d139dc66e0?w=600",
     status: "PUBLISHED",
-    professionalId: 4,
+    professionalId,
   },
   {
     title: "Cuidados essenciais durante o período menstrual",
@@ -75,7 +77,7 @@ const articlesData: Article[] = [
     featuredImage:
       "https://images.unsplash.com/photo-1619603360601-3a67468778f3?w=600",
     status: "PUBLISHED",
-    professionalId: 1,
+    professionalId,
   },
   {
     title: "Check-up feminino: quais exames devo fazer?",
@@ -86,7 +88,7 @@ const articlesData: Article[] = [
     featuredImage:
       "https://images.unsplash.com/photo-1588776814358-557b1db13438?w=600",
     status: "PUBLISHED",
-    professionalId: 1,
+    professionalId,
   },
   {
     title: "Saúde mental feminina: por que priorizar o cuidado emocional",
@@ -97,7 +99,7 @@ const articlesData: Article[] = [
     featuredImage:
       "https://images.unsplash.com/photo-1612336307420-7e2c6211c4ae?w=600",
     status: "PUBLISHED",
-    professionalId: 6,
+    professionalId,
   },
   {
     title: "Implantes hormonais: tudo que você precisa saber",
@@ -108,7 +110,7 @@ const articlesData: Article[] = [
     featuredImage:
       "https://images.unsplash.com/photo-1628471381381-07b2ae140537?w=600",
     status: "PUBLISHED",
-    professionalId: 2,
+    professionalId,
   },
   {
     title: "Alimentação saudável na gravidez: o que priorizar",
@@ -119,7 +121,7 @@ const articlesData: Article[] = [
     featuredImage:
       "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=600",
     status: "PUBLISHED",
-    professionalId: 5,
+    professionalId,
   },
 ];
 
