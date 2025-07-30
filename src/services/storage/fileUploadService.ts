@@ -1,9 +1,10 @@
-import { UploadParams, UploadResult } from "../../utils/supabase/upload";
 import {
   FileNameGenerator,
   FileProcessor,
   FileValidator,
   StorageProvider,
+  UploadParams,
+  UploadResult,
 } from "./types";
 
 export class FileUploadService {

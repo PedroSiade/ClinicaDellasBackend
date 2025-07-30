@@ -1,8 +1,5 @@
-import {
-  FileUploadServiceFactory,
-  UploadParams,
-  UploadResult,
-} from "../../utils/supabase/upload";
+import { UploadParams, UploadResult } from "./types";
+import { FileUploadServiceFactory } from "./fileUploadServiceFactory";
 
 export async function uploadFile(params: UploadParams): Promise<UploadResult> {
   const service = FileUploadServiceFactory.createDefault();

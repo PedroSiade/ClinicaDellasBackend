@@ -1,4 +1,3 @@
-import { FileUploadService } from "../../utils/supabase/upload";
 import { FileValidator } from "./types";
 import {
   CompositeFileValidator,
@@ -11,6 +10,7 @@ import {
   OriginalFileNameGenerator,
   UniqueFileNameGenerator,
 } from "../../utils/fileNameGenerator";
+import { FileUploadService } from "./fileUploadService";
 
 export class FileUploadServiceFactory {
   static createDefault(): FileUploadService {
