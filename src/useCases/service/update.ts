@@ -1,13 +1,14 @@
 import { prisma } from "../../index";
 import { UpdateServiceInput } from "../../schemas/service/updateService";
 
-
-
 export const updateServiceUseCase = async ({
   data,
   id,
 }: {
-  data: UpdateServiceInput;
+  data: UpdateServiceInput & {
+    iconUrl: string | undefined;
+    imageUrl: string | undefined;
+  };
   id: number;
 }) => {
   return await prisma.service.update({

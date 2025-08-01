@@ -10,7 +10,7 @@ type CreatePostResponse = {
 export const createPostUseCase = async ({
   data,
 }: {
-  data: CreatePostInput;
+  data: CreatePostInput & { featuredImage: string | undefined };
 }): Promise<CreatePostResponse> => {
   const professional = await prisma.professional.findUnique({
     where: { id: data.professionalId },

@@ -8,31 +8,32 @@ import { createServiceSchema } from "../../schemas/service/createService";
 import { createServiceUseCase } from "../../useCases/service/create";
 import { updateServiceSchema } from "../../schemas/service/updateService";
 import { updateServiceUseCase } from "../../useCases/service/update";
-
-
+import { UploadParams } from "../../services/storage/types";
+import { getPublicUrl, uploadFile } from "../../services/storage";
 
 export const getManyService = async (req: Request, res: Response) => {
-    try {
-        const search = (req.query.search as string) || "";
-        const data = await getManyServiceUseCase({search: search})
+  try {
+    const search = (req.query.search as string) || "";
+    const data = await getManyServiceUseCase({ search: search });
 
-        return res.status(200).json({
-            data,
-            hasError: false,
-        });
-    } catch (error) {
-        console.error("Erro ao buscar services:", error);
-        return res.status(500).json({
-            hasError: true,
-            message: "Erro interno do servidor." });
-    }
+    return res.status(200).json({
+      data,
+      hasError: false,
+    });
+  } catch (error) {
+    console.error("Erro ao buscar services:", error);
+    return res.status(500).json({
+      hasError: true,
+      message: "Erro interno do servidor.",
+    });
+  }
 };
 
-export const getOneService = async (req: Request, res: Response) => { 
+export const getOneService = async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);
 
-    if (isNaN(id)) {  
+    if (isNaN(id)) {
       return res.status(400).json({
         hasError: true,
         message: "ID inválido. Deve ser um número.",
@@ -40,9 +41,10 @@ export const getOneService = async (req: Request, res: Response) => {
     }
 
     const data = await getOneServiceUseCase({ id });
-    if(!data) {
+    if (!data) {
       return res.status(404).json({
-        message: "Não foi possível encontrar o serviço, pois o mesmo não existe.",
+        message:
+          "Não foi possível encontrar o serviço, pois o mesmo não existe.",
         hasError: true,
       });
     }
@@ -53,10 +55,10 @@ export const getOneService = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Erro ao buscar serviço:", error);
-    
+
     let message = "Erro desconhecido";
 
-    if(error && typeof error === "object" && "message" in error) {
+    if (error && typeof error === "object" && "message" in error) {
       message = (error as { message?: string }).message ?? message;
     }
 
@@ -99,36 +101,89 @@ export const deleteOneService = async (req: Request, res: Response) => {
 };
 
 export const createService = async (req: Request, res: Response) => {
-    try {
-      const parsedBody = createServiceSchema.parse(req.body);
-  
-      const data = await createServiceUseCase({ data: parsedBody });
-      if (!data.data) return res.status(404).json(data);
-      return res.status(201).json({
-        hasError: false,
-        data,
-      });
-    } catch (error) {
-      if (error instanceof ZodError) {
+  try {
+    const parsedBody = createServiceSchema.parse(req.body);
+
+    let iconUrl: string | undefined;
+    let imageUrl: string | undefined;
+
+    const files = req.files as {
+      [fieldname: string]: Express.Multer.File[];
+    };
+
+    if (files?.icon?.[0]) {
+      const iconUploadParams: UploadParams = {
+        file: files.icon[0].buffer,
+        folder: "services/icon",
+        generateUniqueName: true,
+        fileName: files.icon[0].originalname,
+      };
+
+      const iconResult = await uploadFile(iconUploadParams);
+      if (!iconResult.success) {
         return res.status(400).json({
           hasError: true,
-          message: "Erro de validação",
-          issues: error.issues.map((issue) => ({
-            field: issue.path.join("."),
-            message: issue.message,
-          })),
+          message: "Erro ao fazer upload do ícone",
+          details: iconResult.error,
         });
       }
-  
-      console.error("Erro interno ao criar service:", error);
-  
-      return res.status(500).json({
+      iconUrl = getPublicUrl(iconResult.data?.path!);
+    }
+
+    if (files?.image?.[0]) {
+      const imageUploadParams: UploadParams = {
+        file: files.image[0].buffer,
+        folder: "services/illustrations",
+        generateUniqueName: true,
+        fileName: files.image[0].originalname,
+      };
+
+      const imageResult = await uploadFile(imageUploadParams);
+      if (!imageResult.success) {
+        return res.status(400).json({
+          hasError: true,
+          message: "Erro ao fazer upload da imagem",
+          details: imageResult.error,
+        });
+      }
+      imageUrl = getPublicUrl(imageResult.data?.path!);
+    }
+
+    const completeData = {
+      ...parsedBody,
+      iconUrl,
+      imageUrl,
+    };
+
+    const data = await createServiceUseCase({ data: completeData });
+
+    if (!data.data) return res.status(404).json(data);
+
+    return res.status(201).json({
+      hasError: false,
+      data,
+    });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({
         hasError: true,
-        message: "Erro interno do servidor",
+        message: "Erro de validação",
+        issues: error.issues.map((issue) => ({
+          field: issue.path.join("."),
+          message: issue.message,
+        })),
       });
     }
+
+    console.error("Erro interno ao criar service:", error);
+
+    return res.status(500).json({
+      hasError: true,
+      message: "Erro interno do servidor",
+    });
+  }
 };
-  
+
 export const updateService = async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);
@@ -138,7 +193,58 @@ export const updateService = async (req: Request, res: Response) => {
 
     const parsedBody = updateServiceSchema.parse(req.body);
 
-    const data = await updateServiceUseCase({ id, data: parsedBody });
+    let iconUrl: string | undefined;
+    let imageUrl: string | undefined;
+
+    const files = req.files as {
+      [fieldname: string]: Express.Multer.File[];
+    };
+
+    if (files?.icon?.[0]) {
+      const iconUploadParams: UploadParams = {
+        file: files.icon[0].buffer,
+        folder: "services/icon",
+        generateUniqueName: true,
+        fileName: files.icon[0].originalname,
+      };
+
+      const iconResult = await uploadFile(iconUploadParams);
+      if (!iconResult.success) {
+        return res.status(400).json({
+          hasError: true,
+          message: "Erro ao fazer upload do ícone",
+          details: iconResult.error,
+        });
+      }
+      iconUrl = getPublicUrl(iconResult.data?.path!);
+    }
+
+    if (files?.image?.[0]) {
+      const imageUploadParams: UploadParams = {
+        file: files.image[0].buffer,
+        folder: "services/illustrations",
+        generateUniqueName: true,
+        fileName: files.image[0].originalname,
+      };
+
+      const imageResult = await uploadFile(imageUploadParams);
+      if (!imageResult.success) {
+        return res.status(400).json({
+          hasError: true,
+          message: "Erro ao fazer upload da imagem",
+          details: imageResult.error,
+        });
+      }
+      imageUrl = getPublicUrl(imageResult.data?.path!);
+    }
+
+    const completeData = {
+      ...parsedBody,
+      iconUrl,
+      imageUrl,
+    };
+
+    const data = await updateServiceUseCase({ id, data: completeData });
 
     return res.status(200).json({ hasError: false, data });
   } catch (error) {

@@ -8,6 +8,8 @@ import { createPostSchema } from "../../schemas/post/createPost";
 import { createPostUseCase } from "../../useCases/post/create";
 import { updatePostSchema } from "../../schemas/post/updatePost";
 import { updatePostUseCase } from "../../useCases/post/update";
+import { UploadParams } from "../../services/storage/types";
+import { getPublicUrl, uploadFile } from "../../services/storage";
 
 export const getManyPost = async (req: Request, res: Response) => {
   try {
@@ -104,7 +106,34 @@ export const createPost = async (req: Request, res: Response) => {
   try {
     const parsedBody = createPostSchema.parse(req.body);
 
-    const data = await createPostUseCase({ data: parsedBody });
+    let featuredImage: string | undefined;
+
+    if (req.file) {
+      const uploadParams: UploadParams = {
+        file: req.file.buffer,
+        folder: "blog",
+        generateUniqueName: true,
+        fileName: req.file.originalname,
+      };
+
+      const uploadResult = await uploadFile(uploadParams);
+      if (uploadResult.success) {
+        featuredImage = getPublicUrl(uploadResult.data?.path as string);
+      } else {
+        return res.status(400).json({
+          hasError: true,
+          message: "Erro ao fazer upload da imagem",
+          details: uploadResult.error,
+        });
+      }
+    }
+
+    const completeData = {
+      ...parsedBody,
+      featuredImage,
+    };
+
+    const data = await createPostUseCase({ data: completeData });
     if (!data.data) return res.status(404).json(data);
     return res.status(201).json({
       hasError: false,
@@ -140,7 +169,34 @@ export const updatePost = async (req: Request, res: Response) => {
 
     const parsedBody = updatePostSchema.parse(req.body);
 
-    const data = await updatePostUseCase({ id, data: parsedBody });
+    let featuredImage: string | undefined;
+
+    if (req.file) {
+      const uploadParams: UploadParams = {
+        file: req.file.buffer,
+        folder: "blog",
+        generateUniqueName: true,
+        fileName: req.file.originalname,
+      };
+
+      const uploadResult = await uploadFile(uploadParams);
+      if (uploadResult.success) {
+        featuredImage = getPublicUrl(uploadResult.data?.path as string);
+      } else {
+        return res.status(400).json({
+          hasError: true,
+          message: "Erro ao fazer upload da imagem",
+          details: uploadResult.error,
+        });
+      }
+    }
+
+    const completeData = {
+      ...parsedBody,
+      featuredImage,
+    };
+
+    const data = await updatePostUseCase({ id, data: completeData });
 
     return res.status(200).json({ hasError: false, data });
   } catch (error) {

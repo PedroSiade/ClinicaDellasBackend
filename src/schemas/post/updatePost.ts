@@ -6,13 +6,6 @@ export const updatePostSchema = z
     title: z.string().min(1).max(150).trim().optional(),
     description: z.string().min(1).max(250).trim().optional(),
     content: z.string().min(1).trim().optional(),
-    featuredImage: z
-      .string()
-      .url()
-      .max(500)
-      .optional()
-      .or(z.literal(""))
-      .or(z.null()),
     status: PostStatusEnum.optional(),
     professionalId: z.number().int().positive().optional(),
   })
