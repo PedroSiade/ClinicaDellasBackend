@@ -20,7 +20,7 @@ const getServices = async () => {
       iconUrl: true,
       summary: true,
     },
-    take: 10,
+    take: 8,
   });
 };
 
