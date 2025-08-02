@@ -3,6 +3,7 @@ import {
   createWorker,
   deleteOneWorker,
   getManyWorker,
+  getManyWorkerPage,
   getOneWorker,
   updateWorker,
 } from "../controller/worker";
@@ -22,13 +23,18 @@ import {
 } from "../controller/service";
 import { getHomeData } from "../controller/home";
 import { uploadPhoto, uploadServiceImages } from "../middleware/upload";
+import {
+  createBanner,
+  deleteOneBanner,
+  updateBanner,
+} from "../controller/banner";
 
 const createMainRouter = (): Router => {
   const router = Router();
 
   router.get("/", getHomeData);
-
-  router.get("/professional", getManyWorker);
+  router.get("/professionais", getManyWorker);
+  router.get("/professional", getManyWorkerPage);
   router.get("/professional/:id", getOneWorker);
   router.delete("/professional/:id", deleteOneWorker);
   router.post("/professional", uploadPhoto, createWorker);
@@ -45,6 +51,10 @@ const createMainRouter = (): Router => {
   router.delete("/service/:id", deleteOneService);
   router.post("/service", uploadServiceImages, createService);
   router.put("/service/:id", uploadServiceImages, updateService);
+
+  router.delete("/banner/:id", deleteOneBanner);
+  router.post("/banner", uploadPhoto, createBanner);
+  router.put("/banner/:id", uploadPhoto, updateBanner);
 
   return router;
 };

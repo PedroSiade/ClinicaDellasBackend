@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getManyUseCase } from "../../useCases/worker/getMany";
+import { getManyWorkerPageUseCase } from "../../useCases/worker/getManyPage";
 import { getOneUseCase } from "../../useCases/worker/getOne";
 import { deleteUseCase } from "../../useCases/worker/delete";
 import { createProfessionalInputSchema } from "../../schemas/worker/createWorker";
@@ -10,10 +10,28 @@ import { updateWorkerUseCase } from "../../useCases/worker/update";
 import { Prisma } from "@prisma/client";
 import { UploadParams } from "../../services/storage/types";
 import { getPublicUrl, uploadFile } from "../../services/storage";
+import { getManyWorkerUseCase } from "../../useCases/worker/getMany";
 
 export const getManyWorker = async (req: Request, res: Response) => {
   try {
-    const data = await getManyUseCase();
+    const data = await getManyWorkerUseCase();
+
+    return res.status(200).json({
+      data,
+      hasError: false,
+    });
+  } catch (error) {
+    console.error("Erro ao buscar profissionais:", error);
+    return res.status(500).json({
+      hasError: true,
+      message: "Erro interno do servidor.",
+    });
+  }
+};
+
+export const getManyWorkerPage = async (req: Request, res: Response) => {
+  try {
+    const data = await getManyWorkerPageUseCase();
 
     return res.status(200).json({
       data,

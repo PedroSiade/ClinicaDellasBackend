@@ -1,13 +1,18 @@
 import { z } from "zod";
-import { PostStatusEnum } from "./createPost";
 
 export const updatePostSchema = z
   .object({
     title: z.string().min(1).max(150).trim().optional(),
     description: z.string().min(1).max(250).trim().optional(),
     content: z.string().min(1).trim().optional(),
-    status: PostStatusEnum.optional(),
-    professionalId: z.number().int().positive().optional(),
+    professionalId: z
+      .string()
+      .optional()
+      .transform((val) => (val ? Number(val) : undefined))
+      .refine(
+        (val) => val === undefined || (Number.isInteger(val) && val > 0),
+        { message: "O ID deve ser um número inteiro positivo" },
+      ),
   })
   .strict()
   .refine(
