@@ -26,6 +26,7 @@ import { uploadPhoto, uploadServiceImages } from "../middleware/upload";
 import {
   createBanner,
   deleteOneBanner,
+  getOneBanner,
   updateBanner,
 } from "../controller/banner";
 
@@ -52,6 +53,7 @@ const createMainRouter = (): Router => {
   router.post("/service", uploadServiceImages, createService);
   router.put("/service/:id", uploadServiceImages, updateService);
 
+  router.get("/banner/:id", getOneBanner);
   router.delete("/banner/:id", deleteOneBanner);
   router.post("/banner", uploadPhoto, createBanner);
   router.put("/banner/:id", uploadPhoto, updateBanner);

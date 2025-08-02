@@ -9,6 +9,46 @@ import { createBannerUseCase } from "../../useCases/banner/create";
 import { updateBannerInputSchema } from "../../schemas/blog/updateBannerInputSchema";
 import { updateBannerUseCase } from "../../useCases/banner/update";
 import { deleteBannerUseCase } from "../../useCases/banner/delete";
+import { getOneBannerUseCase } from "../../useCases/banner/getOne";
+
+export const getOneBanner = async (req: Request, res: Response) => {
+  try {
+    const id = Number(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({
+        hasError: true,
+        message: "ID inválido. Deve ser um número.",
+      });
+    }
+
+    const data = await getOneBannerUseCase({ id });
+    if (!data) {
+      return res.status(404).json({
+        message:
+          "Não foi possível encontrar o banner, pois o mesmo não existe.",
+        hasError: true,
+      });
+    }
+    return res.status(200).json({
+      data,
+      hasError: false,
+    });
+  } catch (error) {
+    console.error("Erro ao buscar banner:", error);
+
+    let message = "Erro desconhecido";
+
+    if (error && typeof error === "object" && "message" in error) {
+      message = (error as { message?: string }).message ?? message;
+    }
+
+    return res.status(500).json({
+      hasError: true,
+      message,
+    });
+  }
+};
 
 export const deleteOneBanner = async (req: Request, res: Response) => {
   try {
