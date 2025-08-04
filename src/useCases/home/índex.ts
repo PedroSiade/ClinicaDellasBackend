@@ -5,7 +5,6 @@ const getBanners = async () => {
     orderBy: {
       createdAt: "desc",
     },
-    take: 3,
   });
 };
 

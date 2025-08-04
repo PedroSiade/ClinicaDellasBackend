@@ -10,7 +10,7 @@ type Article = {
   professionalId: number;
 };
 
-const professionalId = 16;
+const professionalId = 36;
 
 const articlesData: Article[] = [
   {
