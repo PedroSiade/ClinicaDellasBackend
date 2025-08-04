@@ -130,6 +130,13 @@ export const createService = async (req: Request, res: Response) => {
       iconUrl = getPublicUrl(iconResult.data?.path!);
     }
 
+    if (!iconUrl)
+      return res.status(400).json({
+        hasError: true,
+        message:
+          "Erro de validação, icone é obrigatório para criação de serviço",
+      });
+
     if (files?.image?.[0]) {
       const imageUploadParams: UploadParams = {
         file: files.image[0].buffer,

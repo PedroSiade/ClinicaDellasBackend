@@ -28,81 +28,26 @@ model Banner {
   id        Int       @id @default(autoincrement())
   imageUrl  String    @db.VarChar(500)
   altText   String    @db.VarChar(300)
-  linkUrl   String    @db.VarChar(300)
+  linkUrl   String    @db.VarChar(500)
+  isActive  Boolean   @default(false)
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
 
   @@map("banner")
 }
 
-/**
- * model ProfessionalSpecialty {
- * id             Int      @id @default(autoincrement())
- * professionalId Int
- * specialtyId    Int
- * isPrimary      Boolean  @default(false)
- * certifications Json?
- * isActive       Boolean  @default(true)
- * displayOrder   Int      @default(0)
- * createdAt      DateTime @default(now())
- * updatedAt      DateTime @updatedAt
- * professional Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
- * specialty    Specialty    @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
- * @@unique([professionalId, specialtyId])
- * @@index([professionalId, isActive, displayOrder])
- * @@map("professional_specialty")
- * }
- */
-
 model Service {
   id          Int       @id @default(autoincrement())
   name        String    @db.VarChar(100)
-  iconUrl     String?   @db.VarChar(500)
+  iconUrl     String    @db.VarChar(500)
   imageUrl    String?   @db.VarChar(500)
   summary     String    @db.VarChar(200)
   description String?   @db.Text
-  isActive    Boolean   @default(true)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime? @updatedAt
 
-  // professionals ServiceProfessional[]
-  // categories Category[]
   @@map("service")
 }
-
-/**
- * model Category {
- * id          Int       @id @default(autoincrement())
- * name        String    @unique @db.VarChar(60)
- * slug        String    @unique @db.VarChar(80)
- * description String?   @db.VarChar(200)
- * iconUrl     String?   @db.VarChar(500)
- * color       String?   @db.VarChar(7)
- * createdAt   DateTime  @default(now())
- * updatedAt   DateTime? @updatedAt
- * services Service[]
- * @@map("category")
- * }
- */
-
-// model ServiceProfessional {
-//   id             Int      @id @default(autoincrement())
-//   serviceId      String
-//   professionalId String
-//   customPrice    Decimal? @db.Decimal(10, 2)
-//   customDuration Int?
-//   isAvailable    Boolean  @default(true)
-//   notes          String?  @db.VarChar(300)
-//   createdAt      DateTime @default(now())
-//   updatedAt      DateTime @updatedAt
-//
-//   service      Service      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-//   professional Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
-//
-//   @@unique([serviceId, professionalId])
-//   @@index([professionalId, isAvailable])
-//   @@map("service_professional")
-// }
 
 model Post {
   id             Int       @id @default(autoincrement())
@@ -116,39 +61,16 @@ model Post {
 
   professional Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
 
-  // tags         Tag[]
   @@map("post")
 }
-
-//
-// model Tag {
-//   id          Int      @id @default(autoincrement())
-//   name        String   @unique @db.VarChar(50)
-//   slug        String   @unique @db.VarChar(60)
-//   description String?  @db.VarChar(150)
-//   color       String?  @db.VarChar(7)
-//   createdAt   DateTime @default(now())
-//   updatedAt   DateTime @updatedAt
-//
-//   posts Post[]
-//
-//   @@map("tag")
-// }
 
 enum Role {
   DOCTOR
   NUTRITIONIST
   PSYCHOLOGIST
   PHYSIOTHERAPIST
+  THERAPY_TECHNICIAN
   OWNER
 
   @@map("role")
-}
-
-enum PostStatus {
-  DRAFT
-  PUBLISHED
-  ARCHIVED
-
-  @@map("post_status")
 }

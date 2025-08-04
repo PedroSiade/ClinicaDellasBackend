@@ -8,7 +8,6 @@ type Service = {
   imageUrl?: string;
   summary: string;
   description?: string;
-  isActive: boolean;
 };
 
 const servicesData: Service[] = [
@@ -41,7 +40,6 @@ A consulta ginecológica de rotina é fundamental para a manutenção da saúde 
 - Evite o período menstrual
 
 A prevenção é o melhor cuidado com sua saúde!`,
-    isActive: true,
   },
   {
     name: "Pré-natal Completo",
@@ -69,7 +67,6 @@ O pré-natal é essencial para uma gestação saudável e segura. Oferecemos aco
 - Suporte emocional durante a gestação
 
 Cuidamos de você e do seu bebê com todo carinho e profissionalismo.`,
-    isActive: true,
   },
   {
     name: "Planejamento Familiar",
@@ -100,7 +97,6 @@ Oferecemos orientação completa e personalizada para ajudar você a tomar decis
 Consideramos seu histórico médico, estilo de vida e preferências para indicar o método mais adequado.
 
 Sua escolha, nossa orientação especializada!`,
-    isActive: true,
   },
   {
     name: "Colposcopia",
@@ -134,7 +130,6 @@ A colposcopia é um exame especializado que permite a visualização ampliada e 
 - Venha com acompanhante se desejar
 
 Procedimento seguro e indolor para sua tranquilidade e saúde.`,
-    isActive: true,
   },
   {
     name: "Tratamento de Miomas",
@@ -174,7 +169,6 @@ Os miomas uterinos são tumores benignos muito comuns. Oferecemos diagnóstico p
 Cada caso é único. Avaliamos tamanho, localização e sintomas para indicar o melhor tratamento.
 
 Recupere sua qualidade de vida com tratamento especializado!`,
-    isActive: true,
   },
   {
     name: "Menopausa e Reposição Hormonal",
@@ -220,7 +214,6 @@ A menopausa é uma fase natural da vida feminina que merece atenção e cuidado 
 Monitoramos regularmente para ajustar doses e garantir segurança.
 
 Viva a menopausa com qualidade e bem-estar!`,
-    isActive: true,
   },
   {
     name: "Ultrassom Ginecológico",
@@ -267,7 +260,6 @@ O ultrassom ginecológico é um exame de imagem fundamental para avaliação da 
 - Evite gases (dieta no dia anterior)
 
 Exame seguro, indolor e sem radiação.`,
-    isActive: true,
   },
   {
     name: "Cirurgia Ginecológica Minimamente Invasiva",
@@ -317,7 +309,6 @@ Oferecemos cirurgias modernas com técnicas minimamente invasivas para menor tra
 Acompanhamento desde a indicação até a recuperação total.
 
 Tecnologia avançada para sua segurança e bem-estar!`,
-    isActive: true,
   },
   {
     name: "Tratamento de Endometriose",
@@ -370,7 +361,6 @@ A endometriose é uma condição em que o tecido endometrial cresce fora do úte
 Plano de tratamento individualizado considerando idade, sintomas, desejo reprodutivo e qualidade de vida.
 
 Não aceite a dor como normal. A endometriose tem tratamento!`,
-    isActive: true,
   },
   {
     name: "Saúde Sexual e Reprodutiva",
@@ -426,7 +416,6 @@ A sexualidade é parte fundamental da saúde e bem-estar feminino. Oferecemos at
 Ambiente acolhedor e profissionais capacitados para abordar questões íntimas com naturalidade e respeito.
 
 Sua intimidade merece cuidado especializado!`,
-    isActive: true,
   },
 ];
 

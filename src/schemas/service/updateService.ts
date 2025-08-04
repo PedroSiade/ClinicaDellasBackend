@@ -21,8 +21,6 @@ export const updateServiceSchema = z.object({
     .optional()
     .or(z.literal(""))
     .or(z.null()),
-
-  isActive: z.boolean().optional(),
 });
 
 export type UpdateServiceInput = z.infer<typeof updateServiceSchema>;

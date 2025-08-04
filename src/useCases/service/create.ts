@@ -11,7 +11,7 @@ export const createServiceUseCase = async ({
   data,
 }: {
   data: CreateServiceInput & {
-    iconUrl: string | undefined;
+    iconUrl: string;
     imageUrl: string | undefined;
   };
 }): Promise<CreateServiceResponse> => {
