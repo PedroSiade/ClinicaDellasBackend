@@ -18,8 +18,12 @@ export const createServiceSchema = z.object({
     .max(65535, "Descrição muito longa")
     .optional()
     .or(z.literal("")),
-
-  isActive: z.boolean().default(true).optional(),
+  isActive: z
+    .preprocess(
+      (val) => (val === "true" ? true : val === "false" ? false : val),
+      z.boolean(),
+    )
+    .default(true),
 });
 
 export type CreateServiceInput = z.infer<typeof createServiceSchema>;
