@@ -4,7 +4,6 @@ export const createPostSchema = z.object({
   title: z.string().min(1).max(150).trim(),
   description: z.string().min(1).max(250).trim(),
   content: z.string().min(1).trim(),
-  //professionalId: z.number().int().positive(),
   professionalId: z
     .string()
     .optional()

@@ -1,5 +1,5 @@
 import { prisma } from "../../index";
-import { CreateBannerInput } from "../../schemas/blog/createBannerInputSchema";
+import { UpdateBannerInputSchema } from "../../schemas/blog/updateBannerInputSchema";
 
 type UpdateBannerResponse = {
   hasError: boolean;
@@ -12,7 +12,7 @@ export const updateBannerUseCase = async ({
   id,
 }: {
   id: number;
-  data: CreateBannerInput & { imageUrl?: string | undefined };
+  data: UpdateBannerInputSchema & { imageUrl?: string | undefined };
 }): Promise<UpdateBannerResponse> => {
   const post = await prisma.banner.update({ where: { id }, data });
 

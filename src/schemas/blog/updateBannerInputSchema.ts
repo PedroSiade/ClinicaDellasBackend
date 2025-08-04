@@ -4,13 +4,23 @@ export const updateBannerInputSchema = z.object({
   altText: z
     .string()
     .min(1, "O texto alternativo é obrigatório")
-    .max(300, "O texto alternativo deve ter no máximo 300 caracteres"),
+    .max(300, "O texto alternativo deve ter no máximo 300 caracteres")
+    .optional(),
 
   linkUrl: z
     .string()
     .max(300, "A URL do link deve ter no máximo 300 caracteres")
     .url("A URL do link deve ser válida")
     .optional(),
+  isActive: z
+    .preprocess((val) => {
+      if (typeof val === "string") {
+        if (val.toLowerCase() === "true") return true;
+        if (val.toLowerCase() === "false") return false;
+      }
+      return val;
+    }, z.boolean().default(true))
+    .optional(),
 });
 
-export type CreateBannerInput = z.infer<typeof updateBannerInputSchema>;
+export type UpdateBannerInputSchema = z.infer<typeof updateBannerInputSchema>;

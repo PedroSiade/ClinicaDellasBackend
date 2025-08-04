@@ -125,27 +125,31 @@ export const createWorker = async (req: RequestWithFile, res: Response) => {
   try {
     const parsedBody = createProfessionalInputSchema.parse(req.body);
 
-    let photoUrl: string | undefined;
-
-    if (req.file) {
-      const uploadParams: UploadParams = {
-        file: req.file.buffer,
-        folder: "temp",
-        generateUniqueName: true,
-        fileName: req.file.originalname,
-      };
-
-      const uploadResult = await uploadFile(uploadParams);
-      if (uploadResult.success) {
-        photoUrl = getPublicUrl(uploadResult.data?.path as string);
-      } else {
-        return res.status(400).json({
-          hasError: true,
-          message: "Erro ao fazer upload da imagem",
-          details: uploadResult.error,
-        });
-      }
+    if (!req.file) {
+      return res.status(400).json({
+        hasError: true,
+        message: "É obrigatório enviar uma imagem para o profissional.",
+      });
     }
+
+    const uploadParams: UploadParams = {
+      file: req.file.buffer,
+      folder: "temp",
+      generateUniqueName: true,
+      fileName: req.file.originalname,
+    };
+
+    const uploadResult = await uploadFile(uploadParams);
+
+    if (!uploadResult.success) {
+      return res.status(400).json({
+        hasError: true,
+        message: "Erro ao fazer upload da imagem",
+        details: uploadResult.error,
+      });
+    }
+
+    const photoUrl = getPublicUrl(uploadResult.data?.path as string);
 
     const completeData = {
       ...parsedBody,
@@ -206,15 +210,14 @@ export const updateWorker = async (req: Request, res: Response) => {
       };
 
       const uploadResult = await uploadFile(uploadParams);
-      if (uploadResult.success) {
-        photoUrl = getPublicUrl(uploadResult.data?.path as string);
-      } else {
+      if (!uploadResult.success) {
         return res.status(400).json({
           hasError: true,
           message: "Erro ao fazer upload da imagem",
           details: uploadResult.error,
         });
       }
+      photoUrl = getPublicUrl(uploadResult.data?.path as string);
     }
 
     const completeData = {

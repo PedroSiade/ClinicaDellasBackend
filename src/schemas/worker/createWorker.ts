@@ -15,9 +15,9 @@ export const createProfessionalInputSchema = z.object({
 
   phone: z.string().max(20).trim().optional().or(z.literal("")),
 
-  description: z.string().max(300).trim().optional().or(z.literal("")),
+  description: z.string().max(300).trim(),
 
-  biography: z.string().trim().optional().or(z.literal("")),
+  biography: z.string().trim(),
 
   role: RoleEnum,
 });
