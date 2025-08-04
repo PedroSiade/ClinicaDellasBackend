@@ -12,15 +12,6 @@ export const updateBannerInputSchema = z.object({
     .max(300, "A URL do link deve ter no máximo 300 caracteres")
     .url("A URL do link deve ser válida")
     .optional(),
-  isActive: z
-    .preprocess((val) => {
-      if (typeof val === "string") {
-        if (val.toLowerCase() === "true") return true;
-        if (val.toLowerCase() === "false") return false;
-      }
-      return val;
-    }, z.boolean().default(true))
-    .optional(),
 });
 
 export type UpdateBannerInputSchema = z.infer<typeof updateBannerInputSchema>;
