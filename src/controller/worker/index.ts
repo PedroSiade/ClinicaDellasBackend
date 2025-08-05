@@ -134,7 +134,7 @@ export const createWorker = async (req: RequestWithFile, res: Response) => {
 
     const uploadParams: UploadParams = {
       file: req.file.buffer,
-      folder: "temp",
+      folder: "workers",
       generateUniqueName: true,
       fileName: req.file.originalname,
     };
@@ -204,7 +204,7 @@ export const updateWorker = async (req: Request, res: Response) => {
     if (req.file) {
       const uploadParams: UploadParams = {
         file: req.file.buffer,
-        folder: "temp",
+        folder: "workers",
         generateUniqueName: true,
         fileName: req.file.originalname,
       };

@@ -29,6 +29,7 @@ export interface FileProcessor {
 export type FolderType =
   | "banners"
   | "blog"
+  | "workers"
   | "services/icon"
   | "services/illustrations"
   | "temp";
