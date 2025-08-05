@@ -1,5 +1,6 @@
 import { prisma } from "../../index";
 import { UpdateServiceInput } from "../../schemas/service/updateService";
+import { deleteFile } from "../../services/storage";
 
 export const updateServiceUseCase = async ({
   data,
@@ -11,6 +12,9 @@ export const updateServiceUseCase = async ({
   };
   id: number;
 }) => {
+  const service = await prisma.service.findUnique({ where: { id } });
+  if (data.imageUrl && service?.imageUrl) await deleteFile(service.imageUrl);
+  if (data.iconUrl && service) await deleteFile(service.iconUrl);
   return await prisma.service.update({
     where: { id },
     data: data,

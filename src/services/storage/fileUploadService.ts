@@ -78,9 +78,9 @@ export class FileUploadService {
     }
   }
 
-  async deleteFile(
-    filePath: string,
-  ): Promise<{ success: boolean; error?: string }> {
+  async deleteFile(url: string): Promise<{ success: boolean; error?: string }> {
+    const filePath = this.fileNameGenerator.generateName(url);
+    console.log(filePath);
     return this.storageProvider.delete(filePath);
   }
 

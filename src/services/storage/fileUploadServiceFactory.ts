@@ -1,4 +1,4 @@
-import { FileValidator } from "./types";
+import { FileNameGenerator, FileValidator } from "./types";
 import {
   CompositeFileValidator,
   FileExtensionValidator,
@@ -6,10 +6,7 @@ import {
 } from "../validators";
 import { StandardFileProcessor } from "../processors/standardFileProcessor";
 import { SupabaseStorageProvider } from "../providers/supabaseStorageProvider";
-import {
-  OriginalFileNameGenerator,
-  UniqueFileNameGenerator,
-} from "../../utils/fileNameGenerator";
+import { UniqueFileNameGenerator } from "../../utils/fileNameGenerator";
 import { FileUploadService } from "./fileUploadService";
 
 export class FileUploadServiceFactory {
@@ -34,6 +31,7 @@ export class FileUploadServiceFactory {
     const storageProvider = new SupabaseStorageProvider();
     const fileProcessor = new StandardFileProcessor();
     const nameGenerator = new UniqueFileNameGenerator();
+    // const urlToFilePath = new UrlToFilePathGenerator();
 
     return new FileUploadService(
       storageProvider,
@@ -46,13 +44,12 @@ export class FileUploadServiceFactory {
   static createCustom(options: {
     allowedExtensions?: string[];
     maxSizeInMB?: number;
-    generateUniqueName?: boolean;
+    GenerateUniqueName?: FileNameGenerator;
     bucketName?: string;
   }): FileUploadService {
     const {
       allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".svg"],
       maxSizeInMB = 10,
-      generateUniqueName = true,
       bucketName = "clinica-dellas",
     } = options;
 
@@ -64,9 +61,8 @@ export class FileUploadServiceFactory {
 
     const storageProvider = new SupabaseStorageProvider(bucketName);
     const fileProcessor = new StandardFileProcessor();
-    const nameGenerator = generateUniqueName
-      ? new UniqueFileNameGenerator()
-      : new OriginalFileNameGenerator();
+    const nameGenerator =
+      options.GenerateUniqueName ?? new UniqueFileNameGenerator();
 
     return new FileUploadService(
       storageProvider,

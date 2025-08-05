@@ -1,5 +1,6 @@
 import { UploadParams, UploadResult } from "./types";
 import { FileUploadServiceFactory } from "./fileUploadServiceFactory";
+import { UrlToFilePathGenerator } from "../../utils/fileNameGenerator";
 
 export async function uploadFile(params: UploadParams): Promise<UploadResult> {
   const service = FileUploadServiceFactory.createDefault();
@@ -7,10 +8,12 @@ export async function uploadFile(params: UploadParams): Promise<UploadResult> {
 }
 
 export async function deleteFile(
-  filePath: string,
+  url: string,
 ): Promise<{ success: boolean; error?: string }> {
-  const service = FileUploadServiceFactory.createDefault();
-  return service.deleteFile(filePath);
+  const service = FileUploadServiceFactory.createCustom({
+    GenerateUniqueName: new UrlToFilePathGenerator(),
+  });
+  return service.deleteFile(url);
 }
 
 export function getPublicUrl(filePath: string): string {

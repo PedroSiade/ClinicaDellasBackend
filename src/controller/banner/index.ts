@@ -74,6 +74,16 @@ export const deleteOneBanner = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Erro ao deletar banner:", error);
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2025"
+    ) {
+      return res.status(404).json({
+        hasError: true,
+        message: "Banner não encontrado, não pode ser deletado.",
+      });
+    }
+
     return res.status(500).json({
       hasError: true,
       error,

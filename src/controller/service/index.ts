@@ -13,8 +13,7 @@ import { getPublicUrl, uploadFile } from "../../services/storage";
 
 export const getManyService = async (req: Request, res: Response) => {
   try {
-    const search = (req.query.search as string) || "";
-    const data = await getManyServiceUseCase({ search: search });
+    const data = await getManyServiceUseCase();
 
     return res.status(200).json({
       data,

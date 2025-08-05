@@ -16,3 +16,12 @@ export class UniqueFileNameGenerator implements FileNameGenerator {
     return `${nameWithoutExt}-${timestamp}-${randomSuffix}${ext}`;
   }
 }
+
+export class UrlToFilePathGenerator implements FileNameGenerator {
+  generateName(originalName: string): string {
+    console.log(originalName);
+    const parts = originalName.split("/clinica-dellas/");
+    console.log(parts);
+    return parts[1] ?? "";
+  }
+}
