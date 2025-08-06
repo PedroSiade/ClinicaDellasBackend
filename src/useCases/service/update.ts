@@ -13,10 +13,16 @@ export const updateServiceUseCase = async ({
   id: number;
 }) => {
   const service = await prisma.service.findUnique({ where: { id } });
-  if (data.imageUrl && service?.imageUrl) await deleteFile(service.imageUrl);
+  if ((data.imageUrl || data.dropImage) && service?.imageUrl)
+    await deleteFile(service.imageUrl);
   if (data.iconUrl && service) await deleteFile(service.iconUrl);
+  const { dropImage, image, icon, ...updateData } = data;
+  const updateDataFormat = {
+    ...updateData,
+    imageUrl: data.dropImage ? null : data.imageUrl,
+  };
   return await prisma.service.update({
     where: { id },
-    data: data,
+    data: updateDataFormat,
   });
 };

@@ -21,6 +21,14 @@ export const updateServiceSchema = z.object({
     .optional()
     .or(z.literal(""))
     .or(z.null()),
+  dropImage: z.preprocess((val) => {
+    if (typeof val === "string") {
+      return val === "true";
+    }
+    return val;
+  }, z.boolean().optional()),
+  image: z.string().nullable().optional(),
+  icon: z.string().nullable().optional(),
 });
 
 export type UpdateServiceInput = z.infer<typeof updateServiceSchema>;
