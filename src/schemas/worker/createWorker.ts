@@ -11,7 +11,7 @@ export const RoleEnum = z.enum([
 export const createProfessionalInputSchema = z.object({
   name: z.string().min(1).max(50).trim(),
 
-  email: z.string().email().max(100).toLowerCase().trim(),
+  email: z.string().email().max(100).toLowerCase().trim().optional(),
 
   phone: z.string().max(20).trim().optional().or(z.literal("")),
 

@@ -8,8 +8,6 @@ import { createWorkerUseCase } from "../../useCases/worker/create";
 import { updateProfessionalInputSchema } from "../../schemas/worker/updateWorker";
 import { updateWorkerUseCase } from "../../useCases/worker/update";
 import { Prisma } from "@prisma/client";
-import { UploadParams } from "../../services/storage/types";
-import { getPublicUrl, uploadFile } from "../../services/storage";
 import { getManyWorkerUseCase } from "../../useCases/worker/getMany";
 
 export const getManyWorker = async (req: Request, res: Response) => {
@@ -120,7 +118,6 @@ export const deleteOneWorker = async (req: Request, res: Response) => {
 interface RequestWithFile extends Request {
   file?: Express.Multer.File;
 }
-
 export const createWorker = async (req: RequestWithFile, res: Response) => {
   try {
     const parsedBody = createProfessionalInputSchema.parse(req.body);
@@ -132,31 +129,10 @@ export const createWorker = async (req: RequestWithFile, res: Response) => {
       });
     }
 
-    const uploadParams: UploadParams = {
-      file: req.file.buffer,
-      folder: "workers",
-      generateUniqueName: true,
-      fileName: req.file.originalname,
-    };
-
-    const uploadResult = await uploadFile(uploadParams);
-
-    if (!uploadResult.success) {
-      return res.status(400).json({
-        hasError: true,
-        message: "Erro ao fazer upload da imagem",
-        details: uploadResult.error,
-      });
-    }
-
-    const photoUrl = getPublicUrl(uploadResult.data?.path as string);
-
-    const completeData = {
-      ...parsedBody,
-      photoUrl,
-    };
-
-    const data = await createWorkerUseCase({ data: completeData });
+    const data = await createWorkerUseCase({
+      data: parsedBody,
+      file: req.file,
+    });
 
     return res.status(201).json({
       hasError: false,
@@ -174,7 +150,7 @@ export const createWorker = async (req: RequestWithFile, res: Response) => {
       });
     }
 
-    if (error instanceof Error && error.message.includes("Apenas imagens")) {
+    if (error instanceof Error) {
       return res.status(400).json({
         hasError: true,
         message: error.message,
@@ -199,33 +175,12 @@ export const updateWorker = async (req: Request, res: Response) => {
 
     const parsedBody = updateProfessionalInputSchema.parse(req.body);
 
-    let photoUrl: string | undefined;
+    const data = await updateWorkerUseCase({
+      id,
+      data: parsedBody,
+      file: req.file || null,
+    });
 
-    if (req.file) {
-      const uploadParams: UploadParams = {
-        file: req.file.buffer,
-        folder: "workers",
-        generateUniqueName: true,
-        fileName: req.file.originalname,
-      };
-
-      const uploadResult = await uploadFile(uploadParams);
-      if (!uploadResult.success) {
-        return res.status(400).json({
-          hasError: true,
-          message: "Erro ao fazer upload da imagem",
-          details: uploadResult.error,
-        });
-      }
-      photoUrl = getPublicUrl(uploadResult.data?.path as string);
-    }
-
-    const completeData = {
-      ...parsedBody,
-      photoUrl,
-    };
-
-    const data = await updateWorkerUseCase({ id, data: completeData });
     return res.status(200).json({ hasError: false, data });
   } catch (error) {
     if (
@@ -246,6 +201,17 @@ export const updateWorker = async (req: Request, res: Response) => {
           field: issue.path.join("."),
           message: issue.message,
         })),
+      });
+    }
+
+    // Erros específicos do upload
+    if (
+      error instanceof Error &&
+      error.message.includes("Erro ao fazer upload")
+    ) {
+      return res.status(400).json({
+        hasError: true,
+        message: error.message,
       });
     }
 
