@@ -10,11 +10,19 @@ export const updatePostUseCase = async ({
   id: number;
 }) => {
   const post = await prisma.post.findUnique({ where: { id } });
-  if (data.featuredImage && post?.featuredImage)
-    await deleteFile(post.featuredImage);
+
+  if ((data?.featuredImage || data.dropImage) && post?.featuredImage) {
+    await deleteFile(post?.featuredImage);
+  }
+
+  const { dropImage, photo, ...updateData } = data;
+  const updateDataFormat = {
+    ...updateData,
+    featuredImage: data.dropImage ? null : data.featuredImage,
+  };
 
   return await prisma.post.update({
     where: { id },
-    data: data,
+    data: updateDataFormat,
   });
 };

@@ -2,7 +2,14 @@ import { z } from "zod";
 
 export const updatePostSchema = z
   .object({
+    photo: z.string().nullable().optional(),
     title: z.string().min(1).max(150).trim().optional(),
+    dropImage: z.preprocess((val) => {
+      if (typeof val === "string") {
+        return val === "true";
+      }
+      return val;
+    }, z.boolean().optional()),
     description: z.string().min(1).max(250).trim().optional(),
     content: z.string().min(1).trim().optional(),
     professionalId: z
