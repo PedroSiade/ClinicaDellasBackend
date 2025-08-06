@@ -7,6 +7,7 @@ const divideWorkersByRole = (workers: Professional[]) => {
     doctor: [] as Professional[],
     physiotherapist: [] as Professional[],
     nutritionist: [] as Professional[],
+    psychologist: [] as Professional[],
   };
 
   for (const worker of workers) {
@@ -22,6 +23,9 @@ const divideWorkersByRole = (workers: Professional[]) => {
         break;
       case "NUTRITIONIST":
         groupedWorkers.nutritionist.push(worker);
+        break;
+      case "PSYCHOLOGIST":
+        groupedWorkers.psychologist.push(worker);
         break;
     }
   }
