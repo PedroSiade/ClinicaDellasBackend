@@ -10,13 +10,15 @@ export const createWorkerUseCase = async ({
   data: CreateProfessionalInput;
   file: Express.Multer.File;
 }) => {
-  const verifyEmail = await prisma.professional.findUnique({
-    where: { email: data.email },
-  });
-  if (verifyEmail) {
-    throw Error(
-      "Email informado já possui cadastro, tentar novamente com outro email.",
-    );
+  if (data.email) {
+    const verifyEmail = await prisma.professional.findUnique({
+      where: { email: data.email },
+    });
+    if (verifyEmail) {
+      throw Error(
+        "Email informado já possui cadastro, tentar novamente com outro email.",
+      );
+    }
   }
   const uploadParams: UploadParams = {
     file: file.buffer,

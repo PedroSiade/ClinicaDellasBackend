@@ -12,7 +12,6 @@ export const updateWorkerUseCase = async ({
   id: number;
   file: Express.Multer.File | null;
 }) => {
-  // Buscar profissional existente
   const existingWorker = await prisma.professional.findUnique({
     where: { id },
   });
@@ -20,14 +19,15 @@ export const updateWorkerUseCase = async ({
   if (!existingWorker) {
     throw new Error("Profissional não encontrado");
   }
-
-  const verifyEmail = await prisma.professional.findUnique({
-    where: { email: data.email },
-  });
-  if (verifyEmail && existingWorker.id !== verifyEmail.id) {
-    throw Error(
-      "Email informado já possui cadastro, tentar novamente com outro email.",
-    );
+  if (data.email) {
+    const verifyEmail = await prisma.professional.findUnique({
+      where: { email: data.email },
+    });
+    if (verifyEmail && existingWorker.id !== verifyEmail.id) {
+      throw Error(
+        "Email informado já possui cadastro, tentar novamente com outro email.",
+      );
+    }
   }
 
   const updateData: UpdateProfessionalInput & { photoUrl?: string } = {
