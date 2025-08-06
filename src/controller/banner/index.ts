@@ -1,39 +1,17 @@
 import { Request, Response } from "express";
 import { ZodError } from "zod";
+
 import { Prisma } from "@prisma/client";
-import { getManyPostUseCase } from "../../useCases/post/getMany";
-import { getOnePostUseCase } from "../../useCases/post/getOne";
-import { deletePostUseCase } from "../../useCases/post/delete";
-import { createPostSchema } from "../../schemas/post/createPost";
-import { createPostUseCase } from "../../useCases/post/create";
-import { updatePostSchema } from "../../schemas/post/updatePost";
-import { updatePostUseCase } from "../../useCases/post/update";
 import { UploadParams } from "../../services/storage/types";
 import { getPublicUrl, uploadFile } from "../../services/storage";
+import { createBannerInputSchema } from "../../schemas/blog/createBannerInputSchema";
+import { createBannerUseCase } from "../../useCases/banner/create";
+import { updateBannerInputSchema } from "../../schemas/blog/updateBannerInputSchema";
+import { updateBannerUseCase } from "../../useCases/banner/update";
+import { deleteBannerUseCase } from "../../useCases/banner/delete";
+import { getOneBannerUseCase } from "../../useCases/banner/getOne";
 
-export const getManyPost = async (req: Request, res: Response) => {
-  try {
-    const search = (req.query.search as string) || "";
-    const page = Number(req.query.page) || 1;
-    const data = await getManyPostUseCase({
-      search,
-      page,
-    });
-
-    return res.status(200).json({
-      data,
-      hasError: false,
-    });
-  } catch (error) {
-    console.error("Erro ao buscar profissionais:", error);
-    return res.status(500).json({
-      hasError: true,
-      message: "Erro interno do servidor.",
-    });
-  }
-};
-
-export const getOnePost = async (req: Request, res: Response) => {
+export const getOneBanner = async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);
 
@@ -44,10 +22,11 @@ export const getOnePost = async (req: Request, res: Response) => {
       });
     }
 
-    const data = await getOnePostUseCase({ id });
+    const data = await getOneBannerUseCase({ id });
     if (!data) {
       return res.status(404).json({
-        message: "Não foi possível encontrar o post, pois o mesmo não existe.",
+        message:
+          "Não foi possível encontrar o banner, pois o mesmo não existe.",
         hasError: true,
       });
     }
@@ -56,7 +35,7 @@ export const getOnePost = async (req: Request, res: Response) => {
       hasError: false,
     });
   } catch (error) {
-    console.error("Erro ao buscar post:", error);
+    console.error("Erro ao buscar banner:", error);
 
     let message = "Erro desconhecido";
 
@@ -71,7 +50,7 @@ export const getOnePost = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteOnePost = async (req: Request, res: Response) => {
+export const deleteOneBanner = async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);
 
@@ -82,10 +61,10 @@ export const deleteOnePost = async (req: Request, res: Response) => {
       });
     }
 
-    const data = await deletePostUseCase({ id });
+    const data = await deleteBannerUseCase({ id });
     if (!data) {
       return res.status(404).json({
-        message: "Não foi possível deletar o post, pois o mesmo não existe.",
+        message: "Não foi possível deletar o banner, pois o mesmo não existe.",
         hasError: true,
       });
     }
@@ -94,7 +73,17 @@ export const deleteOnePost = async (req: Request, res: Response) => {
       hasError: false,
     });
   } catch (error) {
-    console.error("Erro ao deletar post:", error);
+    console.error("Erro ao deletar banner:", error);
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2025"
+    ) {
+      return res.status(404).json({
+        hasError: true,
+        message: "Banner não encontrado, não pode ser deletado.",
+      });
+    }
+
     return res.status(500).json({
       hasError: true,
       error,
@@ -102,23 +91,27 @@ export const deleteOnePost = async (req: Request, res: Response) => {
   }
 };
 
-export const createPost = async (req: Request, res: Response) => {
-  try {
-    const parsedBody = createPostSchema.parse(req.body);
+interface RequestWithFile extends Request {
+  file?: Express.Multer.File;
+}
 
-    let featuredImage: string | undefined;
+export const createBanner = async (req: RequestWithFile, res: Response) => {
+  try {
+    const parsedBody = createBannerInputSchema.parse(req.body);
+
+    let imageUrl: string | undefined;
 
     if (req.file) {
       const uploadParams: UploadParams = {
         file: req.file.buffer,
-        folder: "blog",
+        folder: "banners",
         generateUniqueName: true,
         fileName: req.file.originalname,
       };
 
       const uploadResult = await uploadFile(uploadParams);
       if (uploadResult.success) {
-        featuredImage = getPublicUrl(uploadResult.data?.path as string);
+        imageUrl = getPublicUrl(uploadResult.data?.path as string);
       } else {
         return res.status(400).json({
           hasError: true,
@@ -128,13 +121,20 @@ export const createPost = async (req: Request, res: Response) => {
       }
     }
 
+    if (!imageUrl) {
+      return res.status(400).json({
+        hasError: true,
+        message: "Imagem é obrigatória para criar um banner",
+      });
+    }
+
     const completeData = {
       ...parsedBody,
-      featuredImage,
+      imageUrl,
     };
 
-    const data = await createPostUseCase({ data: completeData });
-    if (!data.data) return res.status(404).json(data);
+    const data = await createBannerUseCase({ data: completeData });
+
     return res.status(201).json({
       hasError: false,
       data,
@@ -151,7 +151,14 @@ export const createPost = async (req: Request, res: Response) => {
       });
     }
 
-    console.error("Erro interno ao criar profissional:", error);
+    if (error instanceof Error && error.message.includes("Apenas imagens")) {
+      return res.status(400).json({
+        hasError: true,
+        message: error.message,
+      });
+    }
+
+    console.error("Erro interno ao criar banner:", error);
 
     return res.status(500).json({
       hasError: true,
@@ -160,28 +167,28 @@ export const createPost = async (req: Request, res: Response) => {
   }
 };
 
-export const updatePost = async (req: Request, res: Response) => {
+export const updateBanner = async (req: RequestWithFile, res: Response) => {
   try {
     const id = Number(req.params.id);
     if (isNaN(id)) {
       return res.status(400).json({ hasError: true, message: "ID inválido" });
     }
 
-    const parsedBody = updatePostSchema.parse(req.body);
+    const parsedBody = updateBannerInputSchema.parse(req.body);
 
-    let featuredImage: string | undefined;
+    let imageUrl: string | undefined;
 
     if (req.file) {
       const uploadParams: UploadParams = {
         file: req.file.buffer,
-        folder: "blog",
+        folder: "banners",
         generateUniqueName: true,
         fileName: req.file.originalname,
       };
 
       const uploadResult = await uploadFile(uploadParams);
       if (uploadResult.success) {
-        featuredImage = getPublicUrl(uploadResult.data?.path as string);
+        imageUrl = getPublicUrl(uploadResult.data?.path as string);
       } else {
         return res.status(400).json({
           hasError: true,
@@ -193,11 +200,10 @@ export const updatePost = async (req: Request, res: Response) => {
 
     const completeData = {
       ...parsedBody,
-      featuredImage,
+      ...(imageUrl && { imageUrl }),
     };
 
-    const data = await updatePostUseCase({ id, data: completeData });
-
+    const data = await updateBannerUseCase({ id, data: completeData });
     return res.status(200).json({ hasError: false, data });
   } catch (error) {
     if (
@@ -206,7 +212,7 @@ export const updatePost = async (req: Request, res: Response) => {
     ) {
       return res.status(404).json({
         hasError: true,
-        message: "Post não encontrado, não pode ser atualizado.",
+        message: "Banner não encontrado, não pode ser atualizado.",
       });
     }
 
@@ -221,7 +227,7 @@ export const updatePost = async (req: Request, res: Response) => {
       });
     }
 
-    console.error("Erro interno ao atualizar Post:", error);
+    console.error("Erro interno ao atualizar banner:", error);
     return res
       .status(500)
       .json({ hasError: true, message: "Erro interno do servidor" });
