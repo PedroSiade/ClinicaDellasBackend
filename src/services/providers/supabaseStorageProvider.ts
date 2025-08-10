@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "../../lib/supabase";
+import { supabaseAdmin, isSupabaseConfigured } from "../../lib/supabase";
 import {
   StorageProvider,
   StorageUploadResult,
@@ -13,6 +13,13 @@ export class SupabaseStorageProvider implements StorageProvider {
     fileBuffer: Buffer,
     options: UploadOptions,
   ): Promise<StorageUploadResult> {
+    if (!isSupabaseConfigured() || !supabaseAdmin) {
+      return {
+        success: false,
+        error: new Error("Supabase não está configurado. Configure as variáveis de ambiente SUPABASE_URL, SUPABASE_ANON_KEY e SUPABASE_SERVICE_KEY."),
+      };
+    }
+
     const { data, error } = await supabaseAdmin.storage
       .from(this.bucketName)
       .upload(filePath, fileBuffer, options);
@@ -25,6 +32,13 @@ export class SupabaseStorageProvider implements StorageProvider {
   async delete(
     filePath: string,
   ): Promise<{ success: boolean; error?: string }> {
+    if (!isSupabaseConfigured() || !supabaseAdmin) {
+      return {
+        success: false,
+        error: "Supabase não está configurado.",
+      };
+    }
+
     const { error } = await supabaseAdmin.storage
       .from(this.bucketName)
       .remove([filePath]);
@@ -35,6 +49,10 @@ export class SupabaseStorageProvider implements StorageProvider {
   }
 
   getPublicUrl(filePath: string): string {
+    if (!isSupabaseConfigured() || !supabaseAdmin) {
+      return "";
+    }
+
     const { data } = supabaseAdmin.storage
       .from(this.bucketName)
       .getPublicUrl(filePath);
@@ -44,6 +62,13 @@ export class SupabaseStorageProvider implements StorageProvider {
   async listFiles(
     folder: string,
   ): Promise<{ success: boolean; files?: any[]; error?: string }> {
+    if (!isSupabaseConfigured() || !supabaseAdmin) {
+      return {
+        success: false,
+        error: "Supabase não está configurado.",
+      };
+    }
+
     const { data, error } = await supabaseAdmin.storage
       .from(this.bucketName)
       .list(folder);
