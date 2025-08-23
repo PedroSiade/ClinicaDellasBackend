@@ -1,18 +1,15 @@
 import { prisma } from "../..";
 
-export const getManyServiceUseCase = async ({search}: {search: string}) => {
+export const getManyServiceUseCase = async () => {
   return await prisma.service.findMany({
-    where: {
-        OR: [
-          { name: { contains: search } },
-          { summary: { contains: search } }
-        ],
-    }, 
+    orderBy: {
+      createdAt: "desc",
+    },
     select: {
-        id: true,
-        name: true,
-        summary: true,
-        iconUrl: true,
-    }   
+      id: true,
+      name: true,
+      summary: true,
+      iconUrl: true,
+    },
   });
 };

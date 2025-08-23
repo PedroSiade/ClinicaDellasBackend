@@ -10,7 +10,10 @@ type CreateServiceResponse = {
 export const createServiceUseCase = async ({
   data,
 }: {
-  data: CreateServiceInput;
+  data: CreateServiceInput & {
+    iconUrl: string;
+    imageUrl: string | undefined;
+  };
 }): Promise<CreateServiceResponse> => {
   const service = await prisma.service.create({ data });
 
