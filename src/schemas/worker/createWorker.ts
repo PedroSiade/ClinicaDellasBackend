@@ -8,6 +8,12 @@ export const RoleEnum = z.enum([
   "OWNER",
 ]);
 
+export const codeProfessionalSchema = z
+  .string()
+  .max(50)
+  .trim()
+  .default("");
+
 export const createProfessionalInputSchema = z.object({
   name: z.string().min(1).max(50).trim(),
 
@@ -20,6 +26,8 @@ export const createProfessionalInputSchema = z.object({
   biography: z.string().trim(),
 
   role: RoleEnum,
+
+  codeProfessional: codeProfessionalSchema,
 });
 
 export type CreateProfessionalInput = z.infer<

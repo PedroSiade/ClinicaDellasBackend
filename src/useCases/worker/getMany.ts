@@ -8,6 +8,7 @@ export const getManyWorkerUseCase = async () => {
       name: true,
       role: true,
       photoUrl: true,
+      codeProfessional: true,
     },
   });
   return workers;

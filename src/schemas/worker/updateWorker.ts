@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { RoleEnum } from "./createWorker";
+import { RoleEnum, codeProfessionalSchema } from "./createWorker";
 
 export const updateProfessionalInputSchema = z.object({
   name: z.string().min(1).max(50).trim().optional(),
@@ -19,6 +19,8 @@ export const updateProfessionalInputSchema = z.object({
   biography: z.string().trim().optional().or(z.literal("")).optional(),
 
   role: RoleEnum.optional(),
+
+  codeProfessional: codeProfessionalSchema.optional(),
 });
 
 export type UpdateProfessionalInput = z.infer<

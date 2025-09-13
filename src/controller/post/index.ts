@@ -13,6 +13,7 @@ import { getPublicUrl, uploadFile } from "../../services/storage";
 
 export const getManyPost = async (req: Request, res: Response) => {
   try {
+    //responsavel receber dados, passar para frente e dps retornar pro usuario
     const search = (req.query.search as string) || "";
     const page = Number(req.query.page) || 1;
     const data = await getManyPostUseCase({
