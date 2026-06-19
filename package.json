@@ -11,7 +11,7 @@
     "prisma:generate": "prisma generate",
     "prisma:studio": "prisma studio",
     "prisma:reset": "prisma migrate reset --force",
-    "seed": "ts-node prisma/seed/workers.ts"
+    "seed": "dotenv -e .env -- ts-node prisma/seed/index.ts"
   },
   "keywords": [],
   "author": "",

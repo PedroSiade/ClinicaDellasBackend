@@ -1,55 +1,48 @@
-import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs';
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
+export async function seedUserAuth(prisma: PrismaClient) {
+  console.log("Seeding auth users...");
 
-async function seedUserAuth() {
-  console.log('🌱 Criando usuários de autenticação...');
+  const adminPassword = await bcrypt.hash("admin123", 12);
+  const managerPassword = await bcrypt.hash("manager123", 12);
 
-  try {
-    // Hash das senhas
-    const adminPassword = await bcrypt.hash('admin123', 12);
-    const managerPassword = await bcrypt.hash('manager123', 12);
+  const admin = await prisma.userAuth.upsert({
+    where: { email: "admin@clinicadellas.com" },
+    update: {},
+    create: {
+      name: "Administrador",
+      email: "admin@clinicadellas.com",
+      password: adminPassword,
+    },
+  });
 
-    // Criar usuário admin
-    const admin = await prisma.userAuth.upsert({
-      where: { email: 'admin@clinicadellas.com' },
-      update: {},
-      create: {
-        name: 'Administrador',
-        email: 'admin@clinicadellas.com',
-        password: adminPassword,
-      },
-    });
+  const manager = await prisma.userAuth.upsert({
+    where: { email: "manager@clinicadellas.com" },
+    update: {},
+    create: {
+      name: "Gerente",
+      email: "manager@clinicadellas.com",
+      password: managerPassword,
+    },
+  });
 
-    // Criar usuário manager
-    const manager = await prisma.userAuth.upsert({
-      where: { email: 'manager@clinicadellas.com' },
-      update: {},
-      create: {
-        name: 'Gerente',
-        email: 'manager@clinicadellas.com',
-        password: managerPassword,
-
-      },
-    });
-
-
-  } catch (error) {
-    console.error('❌ Erro ao criar usuários:', error);
-    throw error;
-  }
+  console.log(`Created users: ${admin.email}, ${manager.email}`);
 }
 
 async function main() {
+  const prisma = new PrismaClient();
+
   try {
-    await seedUserAuth();
-  } catch (error) {
-    console.error('❌ Erro no seed:', error);
-    process.exit(1);
+    await seedUserAuth(prisma);
   } finally {
     await prisma.$disconnect();
   }
 }
 
-main();
+if (require.main === module) {
+  main().catch((error) => {
+    console.error("Error seeding auth users:", error);
+    process.exit(1);
+  });
+}

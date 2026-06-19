@@ -6,6 +6,4 @@ node_modules
 
 .idea
 
-prisma/migrations/*
-
 dist

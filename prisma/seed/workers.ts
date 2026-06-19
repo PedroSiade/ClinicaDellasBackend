@@ -143,13 +143,11 @@ const professionalsData: Professionals[] = [
   },
 ];
 
-async function main() {
-  console.log("Starting to seed professionals...");
+export async function seedProfessionals(prisma: PrismaClient) {
+  console.log("Seeding professionals...");
 
-  // Clear existing professionals (optional - remove if you want to keep existing data)
   await prisma.professional.deleteMany({});
 
-  // Create professionals
   for (const professional of professionalsData) {
     const created = await prisma.professional.create({
       data: professional,
@@ -160,11 +158,17 @@ async function main() {
   console.log(`Successfully seeded ${professionalsData.length} professionals!`);
 }
 
-main()
-  .catch((e) => {
-    console.error("Error seeding professionals:", e);
-    process.exit(1);
-  })
-  .finally(async () => {
+async function main() {
+  try {
+    await seedProfessionals(prisma);
+  } finally {
     await prisma.$disconnect();
+  }
+}
+
+if (require.main === module) {
+  main().catch((error) => {
+    console.error("Error seeding professionals:", error);
+    process.exit(1);
   });
+}

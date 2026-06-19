@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 type Service = {
   name: string;
-  iconUrl?: string;
+  iconUrl: string;
   imageUrl?: string;
   summary: string;
   description?: string;
@@ -419,13 +419,11 @@ Sua intimidade merece cuidado especializado!`,
   },
 ];
 
-async function main() {
-  console.log("Starting to seed services...");
+export async function seedServices(prisma: PrismaClient) {
+  console.log("Seeding services...");
 
-  // Clear existing services (optional - remove if you want to keep existing data)
   await prisma.service.deleteMany({});
 
-  // Create services
   for (const service of servicesData) {
     const created = await prisma.service.create({
       data: {
@@ -440,11 +438,17 @@ async function main() {
   console.log(`Successfully seeded ${servicesData.length} services!`);
 }
 
-main()
-  .catch((e) => {
-    console.error("Error seeding services:", e);
-    process.exit(1);
-  })
-  .finally(async () => {
+async function main() {
+  try {
+    await seedServices(prisma);
+  } finally {
     await prisma.$disconnect();
+  }
+}
+
+if (require.main === module) {
+  main().catch((error) => {
+    console.error("Error seeding services:", error);
+    process.exit(1);
   });
+}
