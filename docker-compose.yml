@@ -28,6 +28,9 @@ services:
       - .env
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-clinica_dellas}
+      NODE_ENV: development
+      SEED_MODE: dev
+      RUN_SEED: "true"
     ports:
       - "${PORT:-4530}:4530"
 
