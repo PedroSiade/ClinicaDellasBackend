@@ -4,8 +4,7 @@ import bcrypt from "bcryptjs";
 export async function seedUserAuth(prisma: PrismaClient) {
   console.log("Seeding auth users...");
 
-  const adminPassword = await bcrypt.hash("admin123", 12);
-  const managerPassword = await bcrypt.hash("manager123", 12);
+  const adminPassword = await bcrypt.hash("Dellas@2026", 12);
 
   const admin = await prisma.userAuth.upsert({
     where: { email: "admin@clinicadellas.com" },
@@ -17,17 +16,9 @@ export async function seedUserAuth(prisma: PrismaClient) {
     },
   });
 
-  const manager = await prisma.userAuth.upsert({
-    where: { email: "manager@clinicadellas.com" },
-    update: {},
-    create: {
-      name: "Gerente",
-      email: "manager@clinicadellas.com",
-      password: managerPassword,
-    },
-  });
 
-  console.log(`Created users: ${admin.email}, ${manager.email}`);
+
+  console.log(`Created users: ${admin.email}`);
 }
 
 async function main() {
